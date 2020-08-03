@@ -82,43 +82,124 @@ int32_t no_os_HwOpen(void *devHalCfg)
 	return ADI_HAL_OK;
 }
 
+/**
+ * \brief Opens a logFile. If the file is already open it will be closed and reopened.
+ *
+ * This function opens the file for writing and saves the resulting file
+ * descriptor to the devHalCfg structure.
+ *
+ * \param devHalCfg Pointer to device instance specific platform settings
+ * \param filename The user provided name of the file to open.
+ *
+ * \retval ADI_HAL_OK Function completed successfully, no action required
+ * \retval ADI_HAL_NULL_PTR The function has been called with a null pointer
+ * \retval ADI_HAL_LOGGING_FAIL If the function failed to open or write to the specified filename
+ */
+int32_t no_os_LogFileOpen(void *devHalCfg, const char *filename)
+{
+	return ADI_HAL_OK;
+}
+
+/**
+ * \brief Flushes the logFile buffer to the currently open log file.
+ *
+ * \param devHalCfg Pointer to device instance specific platform settings
+ *
+ * \retval ADI_HAL_OK Function completed successfully, no action required
+ * \retval ADI_HAL_NULL_PTR The function has been called with a null pointer
+ */
+int32_t no_os_LogFileFlush(void *devHalCfg)
+{
+	return ADI_HAL_OK;
+}
+
+/**
+ * \brief Gracefully closes the log file(s).
+ *
+ * \param devHalCfg Pointer to device instance specific platform settings
+ *
+ * \retval ADI_HAL_OK Function completed successfully, no action required
+ * \retval ADI_HAL_NULL_PTR The function has been called with a null pointer
+ * \retval ADI_HAL_LOGGING_FAIL Error while flushing or closing the log file.
+ */
+int32_t no_os_LogFileClose(void *devHalCfg)
+{
+	return ADI_HAL_OK;
+}
+
+/**
+ * \brief Provides a blocking delay of the current thread
+ *
+ * \param devHalCfg Pointer to device instance specific platform settings
+ * \param time_us the time to delay in mico seconds
+ *
+ * \retval ADI_HAL_OK Function completed successfully
+ * \retval ADI_HAL_NULL_PTR the function has been called with a null pointer
+ */
+int32_t no_os_TimerWait_us(void *devHalCfg, uint32_t time_us)
+{
+	int32_t halError = (int32_t)ADI_HAL_OK;
+
+	udelay(time_us);
+
+	return halError;
+}
+
+/**
+ * \brief Provides a blocking delay of the current thread
+ *
+ * \param devHalCfg Pointer to device instance specific platform settings
+ * \param time_ms the Time to delay in milli seconds
+ *
+ * \retval ADI_HAL_OK Function completed successfully
+ * \retval ADI_HAL_NULL_PTR the function has been called with a null pointer
+ */
+int32_t no_os_TimerWait_ms(void *devHalCfg, uint32_t time_ms)
+{
+	int32_t halError = (int32_t)ADI_HAL_OK;
+
+	mdelay(time_ms);
+
+	return halError;
+}
+
 /*
  * Function pointer assignemt for default configuration
  */
 
 /* Initialization interface to open, init, close drivers and pointers to resources */
 int32_t (*adi_hal_HwOpen)(void *devHalCfg) = no_os_HwOpen;
-// int32_t (*adi_hal_HwClose)(void *devHalCfg) = linux_HwClose;
-// int32_t (*adi_hal_HwReset)(void *devHalCfg, uint8_t pinLevel) = linux_HwReset;
+int32_t (*adi_hal_HwClose)(void *devHalCfg) = NULL;
+int32_t (*adi_hal_HwReset)(void *devHalCfg, uint8_t pinLevel) = NULL;
 
 /* SPI Interface */
-// int32_t (*adi_hal_SpiWrite)(void *devHalCfg, const uint8_t txData[], uint32_t numTxBytes) = linux_SpiWrite;
-// int32_t (*adi_hal_SpiRead)(void *devHalCfg, const uint8_t txData[], uint8_t rxData[], uint32_t numRxBytes) = linux_SpiRead;
+int32_t (*adi_hal_SpiWrite)(void *devHalCfg, const uint8_t txData[], uint32_t numTxBytes) = NULL;
+int32_t (*adi_hal_SpiRead)(void *devHalCfg, const uint8_t txData[], uint8_t rxData[], uint32_t numRxBytes) = NULL;
 
 /* Logging interface */
-// int32_t (*adi_hal_LogFileOpen)(void *devHalCfg, const char *filename) = linux_LogFileOpen;
-// int32_t(*adi_hal_LogLevelSet)(void *devHalCfg, int32_t logLevel) = linux_LogLevelSet;
-// int32_t(*adi_hal_LogLevelGet)(void *devHalCfg, int32_t *logLevel) = linux_LogLevelGet;
-// int32_t(*adi_hal_LogWrite)(void *devHalCfg, int32_t logLevel, const char *comment, va_list args) = linux_LogWrite;
-// int32_t(*adi_hal_LogFileClose)(void *devHalCfg) = linux_LogFileClose;
+int32_t (*adi_hal_LogFileOpen)(void *devHalCfg, const char *filename) = no_os_LogFileOpen;
+int32_t(*adi_hal_LogLevelSet)(void *devHalCfg, int32_t logLevel) = NULL;
+int32_t(*adi_hal_LogLevelGet)(void *devHalCfg, int32_t *logLevel) = NULL;
+int32_t(*adi_hal_LogWrite)(void *devHalCfg, int32_t logLevel, const char *comment, va_list args) = NULL;
+int32_t(*adi_hal_LogFileClose)(void *devHalCfg) = no_os_LogFileClose;
 
 /* Timer interface */
-// int32_t (*adi_hal_Wait_ms)(void *devHalCfg, uint32_t time_ms) = linux_TimerWait_ms;
-// int32_t (*adi_hal_Wait_us)(void *devHalCfg, uint32_t time_us) = linux_TimerWait_us;
+int32_t (*adi_hal_Wait_ms)(void *devHalCfg, uint32_t time_ms) = no_os_TimerWait_us;
+int32_t (*adi_hal_Wait_us)(void *devHalCfg, uint32_t time_us) = no_os_TimerWait_ms;
 
 /* Mcs interface */
-// int32_t(*adi_hal_Mcs_Pulse)(void *devHalCfg, uint8_t numberOfPulses) = linux_Mcs_Pulse;
+int32_t(*adi_hal_Mcs_Pulse)(void *devHalCfg, uint8_t numberOfPulses) = NULL;
 
 /* ssi */
-// int32_t(*adi_hal_ssi_Reset)(void *devHalCfg) = linux_ssi_Reset;
+int32_t(*adi_hal_ssi_Reset)(void *devHalCfg) = NULL;
 
 /* File IO abstraction */
-// int32_t(*adi_hal_ArmImagePageGet)(void *devHalCfg, const char *ImagePath, uint32_t pageIndex, uint32_t pageSize, uint8_t *rdBuff) = linux_ImagePageGet;
-// int32_t(*adi_hal_StreamImagePageGet)(void *devHalCfg, const char *ImagePath, uint32_t pageIndex, uint32_t pageSize, uint8_t *rdBuff) = linux_ImagePageGet;
-// int32_t(*adi_hal_RxGainTableEntryGet)(void *devHalCfg, const char *rxGainTablePath, uint16_t lineCount, uint8_t *gainIndex, uint8_t *rxFeGain,
-				//        uint8_t *tiaControl, uint8_t *adcControl, uint8_t *extControl, uint16_t *phaseOffset, int16_t *digGain) = linux_RxGainTableEntryGet;
-// int32_t(*adi_hal_TxAttenTableEntryGet)(void *devHalCfg, const char *txAttenTablePath, uint16_t lineCount, uint16_t *attenIndex, uint8_t *txAttenHp,
-				//        uint16_t *txAttenMult) = linux_TxAttenTableEntryGet;
+int32_t(*adi_hal_ArmImagePageGet)(void *devHalCfg, const char *ImagePath, uint32_t pageIndex, uint32_t pageSize, uint8_t *rdBuff) = NULL;
+int32_t(*adi_hal_StreamImagePageGet)(void *devHalCfg, const char *ImagePath, uint32_t pageIndex, uint32_t pageSize, uint8_t *rdBuff) = NULL;
+int32_t(*adi_hal_RxGainTableEntryGet)(void *devHalCfg, const char *rxGainTablePath, uint16_t lineCount, uint8_t *gainIndex, uint8_t *rxFeGain,
+				       uint8_t *tiaControl, uint8_t *adcControl, uint8_t *extControl, uint16_t *phaseOffset, int16_t *digGain) = NULL;
+int32_t(*adi_hal_TxAttenTableEntryGet)(void *devHalCfg, const char *txAttenTablePath, uint16_t lineCount, uint16_t *attenIndex, uint8_t *txAttenHp,
+				       uint16_t *txAttenMult) = NULL;
 
 /**
  * \brief Platform setup
@@ -133,31 +214,30 @@ int32_t adi_hal_PlatformSetup(void *devHalInfo, adi_hal_Platforms_e platform)
 	adi_hal_Err_e error = ADI_HAL_OK;
 
 	adi_hal_HwOpen = no_os_HwOpen;
-	/*
-	adi_hal_HwClose = linux_HwClose;
-	adi_hal_HwReset = linux_HwReset;
 
-	adi_hal_SpiWrite = linux_SpiWrite;
-	adi_hal_SpiRead = linux_SpiRead;
+	adi_hal_HwClose = NULL;
+	adi_hal_HwReset = NULL;
 
-	adi_hal_LogFileOpen = linux_LogFileOpen;
-	adi_hal_LogLevelSet = linux_LogLevelSet;
-	adi_hal_LogLevelGet = linux_LogLevelGet;
-	adi_hal_LogWrite = linux_LogWrite;
-	adi_hal_LogFileClose = linux_LogFileClose;
+	adi_hal_SpiWrite = NULL;
+	adi_hal_SpiRead = NULL;
 
-	adi_hal_Wait_us = linux_TimerWait_us;
-	adi_hal_Wait_ms = linux_TimerWait_ms;
+	adi_hal_LogFileOpen = NULL;
+	adi_hal_LogLevelSet = NULL;
+	adi_hal_LogLevelGet = NULL;
+	adi_hal_LogWrite = NULL;
+	adi_hal_LogFileClose = NULL;
 
-	adi_hal_Mcs_Pulse = linux_Mcs_Pulse;
+	adi_hal_Wait_us = no_os_TimerWait_us;
+	adi_hal_Wait_ms = no_os_TimerWait_ms;
 
-	adi_hal_ssi_Reset = linux_ssi_Reset;
+	adi_hal_Mcs_Pulse = NULL;
 
-	adi_hal_ArmImagePageGet = linux_ImagePageGet;
-	adi_hal_StreamImagePageGet = linux_ImagePageGet;
-	adi_hal_RxGainTableEntryGet = linux_RxGainTableEntryGet;
-	adi_hal_TxAttenTableEntryGet = linux_TxAttenTableEntryGet;
-	*/
+	adi_hal_ssi_Reset = NULL;
+
+	adi_hal_ArmImagePageGet = NULL;
+	adi_hal_StreamImagePageGet = NULL;
+	adi_hal_RxGainTableEntryGet = NULL;
+	adi_hal_TxAttenTableEntryGet = NULL;
 
 	return error;
 }
